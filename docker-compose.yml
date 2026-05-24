@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # 1. LOG SİMÜLATÖRÜ (Veri Üreticisi)
+  log-simulator:
+    image: python:3.11-slim
+    container_name: snort_simulator
+    working_dir: /app
+    volumes:
+      - ./logs:/app/logs
+      - ./simulator.py:/app/simulator.py
+    # Simülatör çalışsın ve logs klasörüne veri bassın
+    command: ["python", "-u", "/app/simulator.py"]
+    networks:
+      - security_net
+
+
+  # 2. n8n 
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n_soar
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_SECURE_COOKIE=false
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - security_net  
+    restart: unless-stopped    
+
+   # 3. SANAL FIREWALL (n8n buna emir verecek)
+  mock-firewall:
+    build: .
+    container_name: mock_firewall
+    command: ["python", "mock_firewall.py"]
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    networks:
+      - security_net 
+
+
+networks:
+  security_net:
+    driver: bridge
+volumes:
+  n8n_data:    

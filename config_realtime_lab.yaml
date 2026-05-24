@@ -1,0 +1,51 @@
+snort_log_path: "logs/alert_fast"
+correlation_window: 10
+
+soar:
+  enabled: true
+  webhook_url: "http://localhost:5678/webhook/siber-alarm"
+# ----------------------------------
+
+network_context: |
+  # Bu, bir şirketin iç ağını simüle eder.
+  # Ağdaki varlıklar ve rolleri aşağıda tanımlanmıştır.
+
+  # AĞ BİLGİSİ:
+  - 192.168.145.0/24 ağı, bizim izlediğimiz ve koruduğumuz iç ağdır (HOME_NET).
+
+  # VARLIK TANIMLARI VE ROLLERİ:
+  - 192.168.145.128 IP adresi, "Geliştirici Ekibinin" kullandığı bir "Geliştirici Bilgisayarı"dır. Geliştiriciler, sunuculara bakım ve sorun giderme amacıyla bağlanabilirler.
+  - 192.168.145.129 IP adresi, hassas veriler barındıran, eski ve zafiyetli bir "Eski Üretim Sunucusu"dur.
+
+    
+    # GPT-4o'ya gönderilecek prompt şablonu
+prompt_template: |
+  Sen, tecrübeli bir Tier-3 Siber Güvenlik Analistisin. Görevin, sana verilen bir "Ana Alarmı" ve bu alarmın etrafında gerçekleşen "İlişkili Olayları" analiz etmektir. Bu olaylar dizisini bir bütün olarak değerlendirerek Ana Alarmın bir False Positive (FP) mi yoksa True Positive (TP) mi olduğuna karar ver.
+
+  Analizini yaparken aşağıdaki ağ bağlamını dikkate al:
+  {network_context}
+
+  ---
+  OLAY AKIŞI:
+
+  **ANA ALARM (İncelenmesi İstenen):**
+  - Alarm Mesajı: {alert_msg}
+  - Sınıflandırma: {classification}
+  - Öncelik: {priority}
+  - Protokol: {protocol}
+  - Kaynak IP: {src_ip}
+  - Kaynak Port: {src_port}
+  - Hedef IP: {dst_ip}
+  - Hedef Port: {dst_port}
+
+  **İLGİLİ OLAYLAR (Ana Alarmdan Hemen Önce/Sonra Gözlemlenen):**
+  {related_events}
+  ---
+
+  Lütfen bu olay akışına dayanarak analizini SADECE aşağıdaki JSON formatında ver:
+  {{
+    "tespit": "True Positive ya da False Positive",
+    "guven_skoru": 0.0 ile 1.0 arasında bir ondalık sayı,
+    "aciklama": "Bu tespiti neden yaptığını olaylar arasındaki ilişkiyi de kurarak detaylıca anlatan teknik bir açıklama.",
+    "onerilen_aksiyon": "Analistin ne yapması gerektiğini öneren kısa bir cümle.(örn: 'Kaynak IP'yi 24 saatliğine engelle.', 'Göz ardı et, bilinen bir tarama aktivitesi.')."
+  }}

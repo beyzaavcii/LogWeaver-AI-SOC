@@ -1,0 +1,11 @@
+# Python'un oluşturduğu geçici dosyalar
+__pycache__/
+
+# Sanal ortam klasörü
+.venv/
+
+# Gizli bilgileri içeren ortam değişkeni dosyası(API anahtarı vb.)
+.env
+
+#son çalışma modunu tutan geçici kayıt dosyası
+.last_run_mode

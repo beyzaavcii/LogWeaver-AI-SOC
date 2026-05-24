@@ -1,0 +1,33 @@
+log_file_path: "logs/access.log" #bunu normalde vermemiştik bir sorun olursa sileriz
+correlation_window: 20
+
+soar:
+  enabled: true
+  webhook_url: "http://localhost:5678/webhook/siber-alarm"
+# ----------------------------------
+
+network_context: |
+  # Bu, bizim koruduğumuz bir "Üretim Web Sunucusu"dur ve bu sunucunun "normal" çalışma kuralları şunlardır:
+  - Bu sunucu, dış dünyaya hizmet verir ve üzerinde bir içerik yönetim sistemi (CMS) çalışır.
+  - "/uploads" klasörü, kullanıcıların SADECE resim dosyaları (.jpg, .png, .gif) yüklemesi için tasarlanmıştır. Bu klasöre, çalıştırılabilir uzantılara sahip (.php, .jsp, .aspx, .sh, .py) dosyaların yüklenmesi (POST edilmesi) kesinlikle YASAKTIR.
+  - "/admin", "/config", "/backup" gibi yollar, halka açık değildir ve bu yollara yönelik ısrarlı istekler şüphelidir.
+  - Normal bir kullanıcı, bir saniye içinde 5'ten fazla "404 Not Found" hatası almamalıdır.
+
+prompt_template: |
+  Sen, tecrübeli bir Web Güvenlik Analistisin. Görevin, sana verilen ve aynı kullanıcıya (IP adresi) ait olan sıralı web isteklerini ("kullanıcı oturumu") analiz etmektir. Bu oturumun içinde, bir webshell yükleme girişimi gibi anormal ve kötü niyetli bir davranış deseni olup olmadığına karar ver.
+
+  Analizini yaparken aşağıdaki web sunucusu bağlamını dikkate al:
+  {network_context}
+
+  ---
+  KULLANICI OTURUMU (Sıralı Web İstekleri):
+  {session_logs}
+  ---
+
+  Lütfen bu oturuma dayanarak analizini SADECE aşağıdaki JSON formatında ver:
+  {{
+    "tespit": "Anormal Aktivite (True Positive) ya da Normal Aktivite (False Positive)",
+    "guven_skoru": 0.0 ile 1.0 arasında bir ondalık sayı,
+    "aciklama": "Bu tespiti neden yaptığını, istekler arasındaki ilişkiyi de kurarak detaylıca anlatan teknik bir açıklama.",
+    "onerilen_aksiyon": "Analistin ne yapması gerektiğini öneren kısa bir cümle."
+  }}

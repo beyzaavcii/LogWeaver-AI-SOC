@@ -1,0 +1,13 @@
+[**] [1:2014016:2] ET SCAN Nmap Scripting Engine User-Agent [**] [Classification: Attempted Information Leak] [Priority: 2] {TCP} 10.10.10.100:54321 -> 10.10.10.50:80
+[**] [1:2100498:7] ET SCAN Potential SSH Brute-Force Attempt [**] [Classification: Attempted Administrator Privilege Gain] [Priority: 1] {TCP} 185.199.108.153:45123 -> 10.10.10.20:22
+[**] [1:2013504:2] ET POLICY DNS Lookup for .su TLD (Soviet Union) Often Used by Malware [**] [Classification: Potentially Bad Traffic] [Priority: 2] {UDP} 10.10.10.50:60001 -> 8.8.8.8:53
+[**] [1:2016857:3] ET TROJAN Agent.BTZ Checkin [**] [Classification: A Network Trojan was detected] [Priority: 1] {TCP} 10.10.10.50:1194 -> 203.0.113.77:8080
+[**] [1:2001219:18] ET WEB_SERVER SQL Injection Attempt [**] [Classification: Web Application Attack] [Priority: 1] {TCP} 123.45.67.89:80 -> 10.10.10.50:80
+[**] [1:2009428:4] ET WEB_SERVER Nikto Web-Scanner in User-Agent [**] [Classification: Web Application Attack] [Priority: 1] {TCP} 10.10.10.100:54322 -> 10.10.10.60:443
+[**] [1:2003469:3] ET POLICY RDP connection to non-standard port [**] [Classification: Potentially Bad Traffic] [Priority: 2] {TCP} 45.137.21.109:65123 -> 10.10.10.25:3389
+[**] [1:2024220:1] ET EXPLOIT Possible ETERNALBLUE/DOUBLEPULSAR Microsoft SMB RCE Attempt (smb) [**] [Classification: Attempted Administrator Privilege Gain] [Priority: 1] {TCP} 10.10.10.50:445 -> 10.10.10.77:445
+[**] [1:2018375:2] ET SCAN OpenSSL Heartbleed TLS/DTLS Heartbeat Request [**] [Classification: Attempted Information Leak] [Priority: 1] {TCP} 10.10.10.100:12345 -> 10.10.10.80:443
+[**] [1:2027882:2] ET MALWARE Known Malicious Domain contact (shatteredglass-variant) [**] [Classification: A Network Trojan was detected] [Priority: 1] {TCP} 10.10.10.123:54321 -> 198.51.100.55:80
+[**] [1:2013028:3] ET POLICY Tor Server Connect [**] [Classification: Potentially Bad Traffic] [Priority: 2] {TCP} 10.10.10.50:9001 -> 185.220.101.30:9001
+[**] [1:2034647:1] ET EXPLOIT Apache log4j RCE Attempt (JNDI) [**] [Classification: Web Application Attack] [Priority: 1] {TCP} 142.250.181.174:1389 -> 10.10.10.50:8080
+[**] [1:2013411:3] ET POLICY DYN DNS Query for a *.duckdns.org domain - Likely Hostile [**] [Classification: Potentially Bad Traffic] [Priority: 2] {UDP} 10.10.10.60:53333 -> 1.1.1.1:53

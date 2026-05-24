@@ -1,0 +1,41 @@
+# --- SENARYO 1: Normal Kullanıcı Aktivitesi (Beklenen Sonuç: False Positive) ---
+# Bu kullanıcı siteyi normal bir şekilde geziyor.
+192.168.145.150 - - [17/Aug/2025:10:30:01 +0300] "GET /index.html HTTP/1.1" 200 1573
+192.168.145.150 - - [17/Aug/2025:10:30:02 +0300] "GET /styles/main.css HTTP/1.1" 200 481
+192.168.145.150 - - [17/Aug/2025:10:30:03 +0300] "GET /images/logo.png HTTP/1.1" 200 8954
+# Kullanıcı yanlışlıkla var olmayan bir linke tıklıyor, tek bir 404 hatası normaldir.
+192.168.145.150 - - [17/Aug/2025:10:30:04 +0300] "GET /images/old_logo.png HTTP/1.1" 404 198
+
+# --- SENARYO 2: Bariz Webshell Saldırısı (Beklenen Sonuç: True Positive) ---
+# Bu saldırgan, kural kitabımızdaki "yasaklı dosya yükleme" kuralını ihlal ediyor.
+88.54.12.101 - - [17/Aug/2025:10:31:15 +0300] "GET /uploads/ HTTP/1.1" 200 1024
+88.54.12.101 - - [17/Aug/2025:10:31:16 +0300] "POST /uploads/beyza.php HTTP/1.1" 200 56
+88.54.12.101 - - [17/Aug/2025:10:31:17 +0300] "GET /uploads/beyza.php?cmd=whoami HTTP/1.1" 200 12
+
+# --- SENARYO 3: Normal Görünen Ama Kural Dışı Dosya Yüklemesi (Beklenen Sonuç: False Positive) ---
+# Bu kullanıcı, kural kitabımızda "izin verilen" türde bir dosya (.jpg) yüklüyor.
+# AI, ".php" yüklemesi ile ".jpg" yüklemesi arasındaki farkı anlamalıdır.
+192.168.145.151 - - [17/Aug/2025:10:32:05 +0300] "GET /uploads/ HTTP/1.1" 200 1024
+192.168.145.151 - - [17/Aug/2025:10:32:06 +0300] "POST /uploads/profile_picture.jpg HTTP/1.1" 200 15432
+
+# --- SENARYO 4: "Zorlamalı Göz Atma" Saldırısı (Beklenen Sonuç: True Positive) ---
+# Bu saldırgan, kural kitabımızdaki "çok sayıda 404 hatası anormaldir" kuralını ihlal ediyor.
+104.28.223.131 - - [17/Aug/2025:10:35:01 +0300] "GET /admin.php HTTP/1.1" 404 198
+104.28.223.131 - - [17/Aug/2025:10:35:01 +0300] "GET /administrator/ HTTP/1.1" 404 198
+104.28.223.131 - - [17/Aug/2025:10:35:02 +0300] "GET /backup.sql HTTP/1.1" 404 198
+104.28.223.131 - - [17/Aug/2025:10:35:02 +0300] "GET /.env HTTP/1.1" 404 198
+104.28.223.131 - - [17/Aug/2025:10:35:03 +0300] "GET /config.json.bak HTTP/1.1" 404 198
+104.28.223.131 - - [17/Aug/2025:10:35:03 +0300] "GET /wp-admin/ HTTP/1.1" 404 198
+
+
+192.168.145.157 - - [17/Aug/2025:14:45:10 +0300] "GET /api/feedback?subject=Bug_Report&details=Login+sayfasinda+'OR+1=1'+yazinca+hata+aliyorum HTTP/1.1" 200 1024
+
+
+
+
+
+
+192.168.145.154 - - [17/Aug/2025:10:45:22 +0300] "GET /forum/search.php?q=html+script+tag+nasil+kullanilir+<script>alert('ornek')</script> HTTP/1.1" 200 4520
+
+
+

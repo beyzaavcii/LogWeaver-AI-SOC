@@ -1,0 +1,50 @@
+snort_log_path: "logs/test_alerts.log"
+correlation_window: 10
+    
+soar:
+  enabled: true
+  webhook_url: "http://localhost:5678/webhook/siber-alarm"
+
+
+    # Ağımızla ilgili temel bilgiler. LLM'e bağlam sağlamak için kullanılır.
+network_context: |
+       - 10.10.10.100 adresi, bizim yetkili zafiyet tarama sunucumuzdur.
+       - 10.10.10.50 adresi, kritik olmayan bir web geliştirme sunucusudur.
+       - 8.8.8.8 adresi, bilinen ve güvenli bir Google DNS sunucusudur.
+       - 1.1.1.1 adresi, bilinen ve güvenli bir Cloudflare DNS sunucusudur.
+       - Şirket dışından (bilinmeyen IP'lerden) 22 (SSH) veya 3389 (RDP) portlarına gelen her türlü istek yüksek risklidir.
+
+    
+    # GPT-4o'ya gönderilecek prompt şablonu
+prompt_template: |
+  Sen, tecrübeli bir Tier-3 Siber Güvenlik Analistisin. Görevin, sana verilen bir "Ana Alarmı" ve bu alarmın etrafında gerçekleşen
+  "İlişkili Olayları" analiz etmektir. Bu olaylar dizisini bir bütün olarak değerlendirerek Ana Alarmın bir False Positive (FP) mi 
+  yoksa True Positive (TP) mi olduğuna karar ver.
+
+  Analizini yaparken aşağıdaki ağ bağlamını dikkate al:
+  {network_context}
+
+  ---
+  OLAY AKIŞI:
+
+  **ANA ALARM (İncelenmesi İstenen):**
+  - Alarm Mesajı: {alert_msg}
+  - Sınıflandırma: {classification}
+  - Öncelik: {priority}
+  - Protokol: {protocol}
+  - Kaynak IP: {src_ip}
+  - Kaynak Port: {src_port}
+  - Hedef IP: {dst_ip}
+  - Hedef Port: {dst_port}
+
+  **İLGİLİ OLAYLAR (Ana Alarmdan Hemen Önce/Sonra Gözlemlenen):**
+  {related_events}
+  ---
+
+  Lütfen bu olay akışına dayanarak analizini SADECE aşağıdaki JSON formatında ver:
+  {{
+    "tespit": "True Positive ya da False Positive",
+    "guven_skoru": 0.0 ile 1.0 arasında bir ondalık sayı,
+    "aciklama": "Bu tespiti neden yaptığını olaylar arasındaki ilişkiyi de kurarak detaylıca anlatan teknik bir açıklama.",
+    "onerilen_aksiyon": "Analistin ne yapması gerektiğini öneren kısa bir cümle.(örn: 'Kaynak IP'yi 24 saatliğine engelle.', 'Göz ardı et, bilinen bir tarama aktivitesi.')."
+  }}
