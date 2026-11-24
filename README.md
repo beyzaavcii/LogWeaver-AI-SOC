@@ -19,16 +19,16 @@
 - **Behavioral LLM Analysis (OpenAI GPT-4o):** Analyzes log context and multi-event patterns with a security analyst system prompt and enforced JSON output (`response_format={"type": "json_object"}`), classifying events as **True Positive** or **False Positive** with confidence/severity scores and reasoning.
 - **n8n Automation & Response (`soar_handler.py` & n8n Workflow):** Filters for **True Positive** detections and sends JSON payloads via HTTP POST / Webhook to **n8n**, which routes threats based on `log_type` (e.g., Web vs. Network/Snort), triggers IP blocking, and sends email alerts.
 - **Mock Firewall Service (`mock_firewall.py`):** Flask-based REST service exposing `/api/block_ip` (`POST`) to simulate IP blacklisting in an isolated Docker network.
-- **Real-Time SOC Dashboard (`dashboard.py` / `ui.py`):** Reads append-only **JSON-Lines (JSONL)** records (`dashboard-data.json`) line-by-line into Pandas DataFrames and visualizes KPI cards, an **Altair** time-series area chart (*Attack Traffic / Cyber Pulse*), a **True vs. False Positive** donut chart, incident details/reasoning, and conditional links to n8n execution history for True Positives[cite: 11, 26, 31, 44, 45, 46, 47].
+- **Real-Time SOC Dashboard (`dashboard.py` / `ui.py`):** Reads append-only **JSON-Lines (JSONL)** records (`dashboard-data.json`) line-by-line into Pandas DataFrames and visualizes KPI cards, an **Altair** time-series area chart (*Attack Traffic / Cyber Pulse*), a **True vs. False Positive** donut chart, incident details/reasoning, and conditional links to n8n execution history for True Positives.
 - **Containerized Microservices (`Dockerfile`, `docker-compose.yml`):** Orchestrates services (`snort_simulator`, `n8n_soar`, `mock_firewall`, and application components) over a dedicated Docker bridge network (`security_net`).
 
 ---
 
 ## 🧪 Tested Threat Scenarios
 
-- **False Positive Filtering:** Distinguishes benign queries containing HTML/script or SQL-like strings (e.g., search/error text) from actual attacks, avoiding unnecessary blocks[cite: 49, 50, 51].
-- **Webshell Upload & RCE:** Detects sequential activity such as probing `/uploads/`, uploading a `.php` file, and executing commands (`?cmd=whoami`) as a high-severity True Positive, triggering automated IP blocking and alert email[cite: 51, 52].
-- **Post-Exploitation & C2 Correlation:** Correlates prior Trojan/exploit indicators with suspicious outbound/DNS activity (such as a `.su` domain query) to identify potential Command & Control (C2) behavior and trigger containment[cite: 52, 53, 54].
+- **False Positive Filtering:** Distinguishes benign queries containing HTML/script or SQL-like strings (e.g., search/error text) from actual attacks, avoiding unnecessary blocks.
+- **Webshell Upload & RCE:** Detects sequential activity such as probing `/uploads/`, uploading a `.php` file, and executing commands (`?cmd=whoami`) as a high-severity True Positive, triggering automated IP blocking and alert email.
+- **Post-Exploitation & C2 Correlation:** Correlates prior Trojan/exploit indicators with suspicious outbound/DNS activity (such as a `.su` domain query) to identify potential Command & Control (C2) behavior and trigger containment.
 
 ---
 
