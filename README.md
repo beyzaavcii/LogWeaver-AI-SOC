@@ -57,3 +57,68 @@ LogWeaver-AI-SOC/
 ├── config_batch_test.yaml      # Configuration for batch testing
 ├── config_realtime_lab.yaml    # Configuration for real-time lab runs
 └── config_web.yaml             # Configuration for web log scenarios
+
+## Getting Started
+
+This project uses a **hybrid setup**: background services (`n8n_soar`, `mock_firewall`, and `snort_simulator`) run in **Docker**, while the main analysis CLI (`main.py`) and SOC dashboard (`dashboard.py`) run locally in **VS Code** inside a Python virtual environment (`.venv`).
+
+### 1. Local Environment Setup (VS Code)
+Create and activate a virtual environment, then install dependencies:
+
+```bash
+git clone [https://github.com/beyzaavcii/LogWeaver-AI-SOC.git](https://github.com/beyzaavcii/LogWeaver-AI-SOC.git)
+cd LogWeaver-AI-SOC
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+*(Set your OpenAI API key via environment variables / `.env` rather than hardcoding it into source files.)*
+
+---
+
+### 2. Real-Time Analysis (`snort-realtime`)
+1. Reset existing containers and start `n8n_soar`:
+```bash
+docker compose down
+docker compose up --build -d n8n_soar
+```
+2. Open the n8n interface, then start the real-time analyzer in VS Code (waiting on the target log file):
+```bash
+python main.py snort-realtime logs/alert_fast
+```
+3. Start the remaining Docker services (`snort_simulator` and `mock_firewall`):
+```bash
+docker compose up -d snort_simulator mock_firewall
+```
+4. *(Optional)* Follow live simulator container logs in a separate terminal:
+```bash
+docker logs -f snort_simulator
+```
+
+---
+
+### 3. Batch Analysis (`web-batch` & `snort-batch`)
+Start `n8n_soar` and `mock_firewall` first and open the n8n interface:
+```bash
+docker compose up -d n8n_soar mock_firewall
+```
+
+- **Web Logs Batch Analysis:**
+```bash
+python main.py web-batch logs/access.log
+```
+
+- **Snort Logs Batch Analysis:**
+```bash
+python main.py snort-batch logs/test_alerts.log
+```
+*(You can also point `snort-batch` to a populated log file such as `logs/alert_fast`.)*
+
+---
+
+### 4. Launch the SOC Dashboard
+In your active `.venv` terminal, start the Streamlit dashboard (`http://localhost:8501`):
+```bash
+streamlit run dashboard.py
+```
