@@ -125,3 +125,8 @@ In your active `.venv` terminal, start the Streamlit dashboard (`http://localhos
 ```bash
 streamlit run dashboard.py
 ```
+
+## 🖼️ Architecture & Interface Preview
+
+### n8n Automated Response Workflow
+![n8n Automated Response Workflow](n8n-workflow.png)
