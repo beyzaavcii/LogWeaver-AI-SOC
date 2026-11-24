@@ -57,6 +57,9 @@ LogWeaver-AI-SOC/
 ├── config_batch_test.yaml      # Configuration for batch testing
 ├── config_realtime_lab.yaml    # Configuration for real-time lab runs
 └── config_web.yaml             # Configuration for web log scenarios
+```
+
+---
 
 ## Getting Started
 
